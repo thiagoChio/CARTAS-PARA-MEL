@@ -169,6 +169,14 @@
                font-size:16px; cursor:pointer; box-shadow:0 0 10px rgba(0,0,0,0.3);">
      Tocar Música
 </button>
+<button onclick="abrirMensagemEspecial()" 
+        style="position:fixed; top:120px; left:50%; transform:translateX(-50%);
+               padding:20px 30px; 
+               background:#ff7f9f; color:white; border:none; border-radius:40px;
+               font-size:16px; cursor:pointer; box-shadow:0 0 10px rgba(0,0,0,0.3);">
+    Créditos
+</button>
+
 
 
 <!-- ===== MODAL ===== -->
@@ -207,10 +215,24 @@ function abrirModal(div) {
     const campo = document.getElementById("typewriter");
     campo.innerHTML = texto;  // <-- texto aparece de uma vez só
 }
+function abrirMensagemEspecial() {
+    document.getElementById("modalImg").src = ""; // sem imagem
+    document.getElementById("modalImg").style.display = "none"; // esconde a imagem
+
+    document.getElementById("modalTitulo").innerHTML = "créditos";
+
+    document.getElementById("modal").style.display = "flex";
+
+    const campo = document.getElementById("typewriter");
+    campo.innerHTML = "Oi mel, tudo bem ? Aqui é o Thiago,queria te desejar um feliz aniversario, tudo de bom na sua vida e que Deus te abençoe e te ilumine sempre(completa com mais um pouco sobre deus). Queria dizer que foi muito legal participar desse presente com a Ana e espero que voce goste, porque foi dificil kkkkk. Enfim aproveita seu dia";
+}
+
 
 /* Fechar modal */
 function fecharModal() {
     document.getElementById("modal").style.display = "none";
+    document.getElementById("modalImg").style.display = "block";
+
 }
 
 </script>
