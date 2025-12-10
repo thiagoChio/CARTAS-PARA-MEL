@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Surpresa</title>
+
+<style>
+    
+
+    /* ===== FUNDO ANIMADO ===== */
+    body {
+        
+        margin: 0;
+        font-family: Arial, sans-serif;
+        overflow-x: hidden;
+        background-color: #eee4ac;
+        /* background: linear-gradient(120deg, #ffe1ec, #ffc2d9, #ffd8e8); */
+        
+        background-size: 300% 300%;
+        animation: gradient 12s ease infinite;
+    }
+    
+
+    @keyframes gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* ===== POLAROID ===== */
+    .polaroid {
+        width: 180px;
+        background: white;
+        padding: 10px;
+        padding-bottom: 25px;
+        text-align: center;
+        box-shadow: 0px 4px 8px rgba(0,0,0,0.3);
+        border-radius: 8px;
+        position: absolute;
+        transform: rotate(calc(-10deg + 20deg * var(--r)));
+        transition: 0.3s;
+        cursor: pointer;
+    }
+
+    .polaroid:hover {
+        transform: scale(1.1);
+        z-index: 10;
+    }
+
+    .polaroid img {
+        width: 100%;
+        border-radius: 6px;
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .texto {
+        margin-top: 8px;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    /* ===== MODAL ===== */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.55);
+        justify-content: center;
+        align-items: center;
+        z-index: 20;
+    }
+
+    .modal-content {
+        background: rgb(233, 232, 157);
+        padding: 25px;
+        width: 85%;
+        max-width: 420px;
+        border-radius: 12px;
+        text-align: center;
+        animation: fadeIn 0.4s ease;
+        box-shadow: 0 0 15px rgba(0,0,0,0.4);
+        position: relative;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 28px;
+        cursor: pointer;
+        color: #777;
+    }
+
+    .modal-img {
+        width: 80%;
+        border-radius: 8px;
+        margin-top: 12px;
+    }
+
+    .titulo {
+        font-weight: bold;
+        font-size: 22px;
+        color: #ff5c8a;
+        margin-top: 10px;
+    }
+
+  /* ===== MODAL CORRIGIDO ===== */
+.modal-content {
+    background: rgb(233, 232, 157);
+    padding: 25px;
+    width: 95%;
+    max-width: 600px;
+
+    /* AQUI ESTÁ O AUMENTO REAL DA ALTURA */
+    max-height: 98vh;     /* ocupa quase a tela toda */
+    min-height: 70vh;     /* força o quadrado ficar bem alto */
+
+    overflow-y: auto;
+    border-radius: 16px;
+    text-align: center;
+    animation: fadeIn 0.4s ease;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    position: relative;
+}
+
+
+.texto-modal {
+    margin-top: 20px;
+    font-size: 22px;      /* aumenta mais a letra */
+    line-height: 1.6;
+    color: #444;
+    white-space: pre-line;
+}
+
+/* AJUSTE PARA CELULAR */
+@media (max-width: 600px) {
+    .modal-content {
+        width: 100%;
+        max-width: 100%;    /* ocupa praticamente a tela toda */
+    }
+
+    .texto-modal {
+        font-size: 30px;
+    }
+
+    .modal-img {
+        width: 60%;
+    }
+}
+
+
+</style>
+</head>
+<body>
+<button onclick="tocarMusica()" 
+        style="position:fixed; top:35px; left:50%; transform:translateX(-50%);
+               padding:30px 40px; 
+               background:#e9d060; color:white; border:none; border-radius:40px;
+               font-size:16px; cursor:pointer; box-shadow:0 0 10px rgba(0,0,0,0.3);">
+     Tocar Música
+</button>
+
+
+<!-- ===== MODAL ===== -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="fecharModal()">&times;</span>
+
+        <div id="modalTitulo" class="titulo"></div>
+
+        <img id="modalImg" src="" class="modal-img">
+
+        <div id="typewriter" class="texto-modal"></div>
+    </div>
+</div>
+<audio id="musica" src="paris.mp3"></audio>
+
+<script>
+
+function tocarMusica() {
+    const musica = document.getElementById("musica");
+    musica.volume = 0.5;
+    musica.play();
+}
+
+/* Abrir modal sem máquina de escrever */
+function abrirModal(div) {
+    const foto = div.getAttribute("data-foto");
+    const titulo = div.getAttribute("data-titulo");
+    const texto = div.getAttribute("data-texto");
+
+    document.getElementById("modalImg").src = foto;
+    document.getElementById("modalTitulo").innerHTML = titulo;
+
+    document.getElementById("modal").style.display = "flex";
+
+    const campo = document.getElementById("typewriter");
+    campo.innerHTML = texto;  // <-- texto aparece de uma vez só
+}
+
+/* Fechar modal */
+function fecharModal() {
+    document.getElementById("modal").style.display = "none";
+}
+
+</script>
+
+
+<!-- ======== POLAROIDS CLICÁVEIS (EDITÁVEIS) ======== -->
+
+<div class="polaroid"
+     style="top:10%; left:10%; --r:0;"
+     data-foto="foto-ana.jpg"
+     data-titulo="Ana para Mel"
+     data-texto="Oii meu amor, espero que quando abrir isso a primeira carta que você leia seja a minha. Brincadeira rs, quero te desejar um feliz aniversário, que os 19 anos seja tudo que você imaginou e ainda melhor. Você merece as melhores coisas desse mundo e nunca deixe ninguém tentar te convencer o contrário! Ter você por perto é um grande presente de Deus não só na minha vida, mas também na de todo mundo que tem esse previlégio. Eu já nem sei mais viver sem ter a minha primeira melhor amiga do meu lado. Amo você Mel, e sempre torço muito pra que todos seus sonhos se realizem, até porque, ver isso acontecer também faz parte dos meus sonhos 🤍🤍🤍🤍
+"
+     onclick="abrirModal(this)">
+    <img src="foto-ana.jpg">
+    <div class="texto">Ana Paula</div>
+</div>
+
+<div class="polaroid"
+     style="top:60%; left:20%; --r:1;"
+     data-foto="foto-mafe.jpg"
+     data-titulo="Mafe para Mel"
+     data-texto="oiee mell to pasando aq pra desejar um feliz aniversário e agradecer pela sua amizade que é tão importante pra mim. Desejo tudo de bom nessa vida pra vc, espero estar contigo em todos momentos sendo de alegria até tristeza, conte comigo sempreeee. que vc continue sendo essa pessoas incrível e radiante que vc é🩷
+
+parabéns por ser perfeita te amo🩷🌞
+"
+     onclick="abrirModal(this)">
+    <img src="foto-mafe.jpg">
+    <div class="texto">MAFE</div>
+</div>
+
+<div class="polaroid"
+     style="top:30%; left:50%; --r:1;"
+     data-foto="FOTO-YURI (2).jpg"
+     data-titulo="Yuri para Mel"
+     data-texto="Oi Mel,
+Estou escrevendo esta carta não só para te desejar um feliz aniversário, mas também para te dizer e deixar claro o quão incrível você é. No seu jeito de ser, falar, pensar e viver, você é uma menina que enxerga grandeza na simplicidade da vida. Você é inabalável; mesmo diante de qualquer tipo de problema, você sempre se mantém positiva e alegra todos à sua volta.
+O ano já está acabando e o grande evento definitivamente não é o Ano Novo nem o Natal, e sim o seu aniversário. Uma coisa eu posso dizer é que sou muito grato por ter sido convidado e, com certeza, nesse ano todo, você foi a melhor pessoa que tive chance de conhecer melhor. Pretendo te levar pra vida inteira como a pessoa incrível que você é.
+Feliz Aniversário.
+"
+     onclick="abrirModal(this)">
+    <img src="FOTO-YURI (2).jpg">
+    <div class="texto">YURI</div>
+</div>
+<div class="polaroid"
+     style="top:7%; left:65%; --r:0;"
+     data-foto="foto-giugiu.jpg"
+     data-titulo="giugiu para Mel"
+     data-texto="Amiga, você nem imagina o quanto você significa pra mim, e como ter encontrado sua amizade naquela epoca foi essencial. 
+Sempre que vejo nossas fotos, nossos videos, eu sorrio lembrando de tudo que a gente viveu juntas, de todos os momentos que eu tive a sorte de compartilhar com você, obrigada por tanto. 
+Você não faz ideia do quão incrível é te ver feliz, te ver seguindo seus sonhos, conhecendo gente nova e mostrando pra elas a sorte que é conhecer você. 
+Mesmo não estando mais com você todos os dias, eu espero que você não duvide do amor que eu tenho por você, do quanto eu torço por você, pela sua felicidade e pela realização dos seus sonhos.Você merece todas as coisas mais lindas que existem e tudo que ainda tem alem delas.
+Que a vida te traga a mesma felicidade que você traz pra vida, amiga. Você é muito, muito especial.
+Te amo pra sempre! Que Deus te dê sempre as coisas mais lindas e iluminadas, que sua vida seja sempre cheia de coisas boas e que eu esteja aqui pra acompanhar todas elas. 
+Brilha sempre, melissa, sempre, e mostra o quão capaz você é. Sou extremamente grata por te ter na minha vida. 
+Aproveita seu dia internacional e seja o mais feliz que você puder. 
+TE AMO, feliz aniversário"
+     onclick="abrirModal(this)">
+    <img src="foto-giugiu.jpg">
+    <div class="texto">GIUGIU</div>
+</div>
+
+<div class="polaroid"
+     style="top:75%; left:55%; --r:0.4;"
+     data-foto="foto-yasmin.jpg"
+     data-titulo="YasBolas para Mel"
+     data-texto="Mel, parabéns pelo seu dia! Que a vida te retribua todo o carinho imenso que você dedica a quem ama. É impossível não gostar de você! Sua fofura, sua intensidade e seu jeito de demonstrar o seu carinho fazem de você uma pessoa única e incrível. Por favor, nunca mude isso em você! Saiba que gosto muitíssimo de você e que nossa amizade é um presente pra mim. Que a felicidade te abrace hoje e sempre. Feliz vida melzinhaaa!"
+     onclick="abrirModal(this)">
+    <img src="foto-yasmin.jpg">
+    <div class="texto">YasBolas</div>
+</div>
+
+<div class="polaroid"
+     style="top:45%; left:5%; --r:1.8;"
+     data-foto="foto-lud.jpg"
+     data-titulo="Lud para Mel"
+     data-texto="oii miga linda diva💕💕
+venho aqui te parabenizar pelo seu dia e reafirmar todo o meu amor, carinho e consideração que sinto por você. te conheci esse ano, mas sinto que a nossa amizade é de anosss. a gente se deu tão bem e se tornou tão inseparável que fico muito grata por Deus ter colocado você na minha vida exatamente no momento em que eu precisava de uma amiga companheira, engraçada, gente boa e de um coração enormeee que é esse seu.
+Eu te amo muito, amo o jeito que você ri e faz as pessoas se sentirem bem mesmo quando você está pra baixo, amo o quanto você se importa comigo e com as pessoas que você gosta, amo quando você fala as coisas mais absurdas do mundo e até quando você me pressiona na cama e puxa a minha coberta, me deixando com frio. espero comemorar essa data tão linda e importante ao seu lado por mais 100 vezes!!  PARABENSSS MEMELLLL 
+que vc continue sendo tudo que faz de você… você"
+     onclick="abrirModal(this)">
+    <img src="foto-lud.jpg">
+    <div class="texto">LUD</div>
+</div>
+
+<div class="polaroid"
+     style="top:82%; left:75%; --r:0;"
+    data-foto="foto-mayara.jpg"
+     data-titulo="Mayara para Mel"
+     data-texto="oiee mell to pasando aq pra desejar um feliz aniversário e agradecer pela sua amizade que é tão importante pra mim. Desejo tudo de bom nessa vida pra vc, espero estar contigo em todos momentos sendo de alegria até tristeza, conte comigo sempreeee. que vc continue sendo essa pessoas incrível e radiante que vc é🩷
+
+parabéns por ser perfeita te amo🩷🌞
+"
+     onclick="abrirModal(this)">
+    <img src="foto-mayara.jpg">
+    <div class="texto">MAYARA</div>
+</div>
+
+<div class="polaroid"
+     style="top:38%; left:30%; --r:0;"
+     data-foto="foto-leonna.jpg"
+     data-titulo="Leonna para Mel"
+     data-texto="To Issa:
+
+“Doce, doce como mel.” Era a frase que eu sempre lia quando abria sua página no Twitter e, por mais que fosse uma brincadeira, era a mais pura verdade. É incrível ver que você é um ser tão iluminado, amoroso e gentil com todos. Claro, às vezes a gente leva umas patadas meio ácidas kkkkk, mas elas sempre viram motivo de risada.
+
+Te conhecer durante o ensino médio, eu posso dizer sem dúvida, foi uma salvação. Eu estava passando por um momento terrível de adaptação à nova escola, mas quando percebi que eu tinha, de fato, uma AMIGA, entendi que tinha encontrado meu lugar. Foi através de você, Issa, que conheci pessoas que hoje são muito especiais para mim e com quem compartilhei momentos incríveis. Falando assim até parece que eu te usei kkkkkk, mas digo isso no sentido de que você foi a principal razão para eu não ter entrado em um buraco muito fundo durante o ensino médio. Com você, descobri o que era ter uma amizade leve, sem precisar me esforçar para pertencer a algum lugar. Simplesmente acontecia de forma natural.
+
+Eu te amo muito, Issa. Sinto muito a sua falta todas as manhãs dentro de uma sala de aula, falando as coisas mais absurdas, mas que, por algum motivo, sempre pareciam fazer sentido de serem discutidas. Espero muito que a gente nunca se perca. Mesmo que passem anos afastadas, que a gente volte a se falar como se tivéssemos saído do 3º ano ontem.
+
+FELIZ ANIVERSÁRIO, ISSINHA DO MEU CORAÇÃO!
+Aproveita muito o Dia Internacional da Melissa, meu amor. Te amo ❤"
+     onclick="abrirModal(this)">
+    <img src="foto-leonna.jpg">
+    <div class="texto">lEONNA</div>
+</div>
+<div class="polaroid"
+     style="top:20%; left:75%; --r:0,7;"
+     data-foto="foto-orth.jpg"
+     data-titulo="ORTH para Mel"
+     data-texto="Mel, você é brilho, força e doçura. Que seu novo ciclo seja repleto de momentos inesquecíveis e conquistas lindas. Você merece o mundo!"
+     onclick="abrirModal(this)">
+    <img src="foto-orth.jpg">
+    <div class="texto">ORTH</div>
+</div>
+
+<div class="polaroid"
+     style="top:88%; left:12%; --r:0;"
+     data-foto="foto-enrico.jpg"
+     data-titulo="Enrico para Mel"
+     data-texto="Parabensss melissaa que que saudade!!! Que saudade dos dias que a gente ia pra escola e ficava rindo e conversando o dia inteiro eram meus dias preferidos. Você continua sendo a pessoa mais engraçada, mais alto astral e mais carinhosa que eu conheço. Espero que você continue sempre assim nunca mude o seu jeito feliz aniversário!!!! Parabéns por mais um ano que tudo de bom aconteça e que tudo que você sonha se realize!!!🎂❤"
+     onclick="abrirModal(this)">
+    <img src="foto-enrico.jpg">
+    <div class="texto">ENRICO</div>
+</div>
+<audio id="musica" src="paris.mp3"></audio>
+<div class="polaroid"
+     style="top:50%; left:70%; --r:-0.6;"
+     data-foto="foto-iza.jpg"
+     data-titulo="IZA para Mel"
+     data-texto="Ola Me
+
+Querida prima, sempre foi “a prima que mora na cidade grande” amei passar minha infância brincando na casa da vó Izabel com vc, Fernando e a Be.
+Quando vcs vinham para o sítio era pura felicidade, não tínhamos preocupação e nem responsabilidades kkkkkk
+Bons tempos…..
+Hoje já crescemos e somos adultos, cada qual com seus afazeres e muitas das vezes não sobra tempo para conversamos mas quero dizer o quão especial vc é para mim, o quanto de orgulho nos dá por ser tão estudiosa e responsável❤
+Que Deus te abençoe infinitamente mais do que vc já é, que ele realize os desejos do seu coração.
+Te amo muito minha querida❤"
+     onclick="abrirModal(this)">
+    <img src="foto-iza.jpg">
+    <div class="texto">IZA</div>
+</div>
+
+
+
+
+</body>
+</html>
